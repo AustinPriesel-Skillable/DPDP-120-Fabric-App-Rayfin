@@ -74,11 +74,27 @@ function isConnectorUnavailable(error: unknown): boolean {
 }
 
 async function runViaConnector(query: string): Promise<DaxRow[]> {
-  const response = await getRayfinClient().connectors.transitModel.executeQuery({ query });
-  const failure = response.output?.queryError ?? response.output?.responseError;
-  if (failure) throw new Error(failure.message);
-  return response.output?.tables?.[0]?.rows ?? [];
+  const result =
+    await getRayfinClient().connectors.hslModel.executeQuery({
+      query,
+    });
+  if (result.status === 'error') {
+    const message = result.error.recoveryHint
+      ? `${result.error.message} ${result.error.recoveryHint}`
+      : result.error.message;
+
+    throw new Error(message);
+  }
+  return result.table.rows.map((row) =>
+    Object.fromEntries(
+      result.table.columns.map((column, index) => [
+        column.name,
+        row[index],
+      ]),
+    ) as DaxRow,
+  );
 }
+
 
 async function runViaHost(query: string): Promise<DaxRow[]> {
   return executeDaxViaHost(WORKSPACE_ID, DATASET_ID, query);
