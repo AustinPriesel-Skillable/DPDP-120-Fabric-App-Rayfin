@@ -1,8 +1,9 @@
 id: helsinki-public-transport
 name: Helsinki Public Transport
 version: 1.0.0
-
 services:
+  connectors:
+    enabled: true
   auth:
     enabled: true
     fabric:
@@ -10,17 +11,13 @@ services:
     allowedRedirectUris:
       - http://localhost:5173
       - http://127.0.0.1:5173
-
   data:
     enabled: true
     dialect: mssql
-
   storage:
     enabled: false
-
   functions:
     enabled: false
-
   staticHosting:
     enabled: true
     folder: dist
