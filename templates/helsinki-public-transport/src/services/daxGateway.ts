@@ -70,7 +70,9 @@ export function needsPowerBiSignIn(): boolean {
 
 function isConnectorUnavailable(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
-  return /connectorfunction|not enabled|not found|404|501/i.test(message);
+  return /connectorfunction|not enabled|not found|404|501|timed out|timeout/i.test(
+    message,
+  );
 }
 
 async function runViaConnector(query: string): Promise<DaxRow[]> {
